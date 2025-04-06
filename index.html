@@ -1,0 +1,2913 @@
+<!DOCTYPE html>
+<html lang="en" class="light-theme">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CK Salon - Your Beauty Haven</title>
+  
+  <!-- Font imports -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Three.js and p5.js libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.157.0/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+  
+  <!-- GSAP for advanced animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <style>
+    /* Theme Variables */
+    :root {
+      /* Light Theme (default) */
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --bg-tertiary: #f1f3f5;
+      --text-primary: #212529;
+      --text-secondary: #495057;
+      --text-tertiary: #6c757d;
+      --border-color: #dee2e6;
+      --card-bg: #ffffff;
+      --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --header-bg: rgba(255, 255, 255, 0.9);
+      --footer-bg: #8c102e;
+      --footer-text: #ffffff;
+      
+      /* Primary Colors (same for both themes) */
+      --primary-50: #fff0f3;
+      --primary-100: #ffe1e9;
+      --primary-200: #ffc2d4;
+      --primary-300: #ff94b0;
+      --primary-400: #ff5783;
+      --primary-500: #ff2d5e;
+      --primary-600: #f01346;
+      --primary-700: #cc0a35;
+      --primary-800: #a70d31;
+      --primary-900: #8c102e;
+      
+      /* Fonts */
+      --font-sans: 'Inter', sans-serif;
+      --font-serif: 'Playfair Display', serif;
+      
+      /* Transitions */
+      --transition-slow: 0.5s ease;
+      --transition-medium: 0.3s ease;
+      --transition-fast: 0.2s ease;
+    }
+    
+    /* Dark Theme */
+    .dark-theme {
+      --bg-primary: #121212;
+      --bg-secondary: #1e1e1e;
+      --bg-tertiary: #2d2d2d;
+      --text-primary: #f8f9fa;
+      --text-secondary: #e9ecef;
+      --text-tertiary: #dee2e6;
+      --border-color: #444444;
+      --card-bg: #1e1e1e;
+      --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+      --header-bg: rgba(18, 18, 18, 0.9);
+      --footer-bg: #2d2d2d;
+      --footer-text: #f8f9fa;
+    }
+    
+    /* Base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    body {
+      font-family: var(--font-sans);
+      color: var(--text-primary);
+      background-color: var(--bg-primary);
+      line-height: 1.5;
+      transition: background-color var(--transition-medium), color var(--transition-medium);
+    }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background-color: var(--bg-tertiary);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background-color: var(--primary-300);
+      border-radius: 9999px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: var(--primary-400);
+    }
+    
+    /* Container */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+    
+    /* Typography */
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-serif);
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--text-primary);
+      transition: color var(--transition-medium);
+    }
+    
+    p {
+      color: var(--text-secondary);
+      transition: color var(--transition-medium);
+    }
+    
+    .text-gradient {
+      background: linear-gradient(to right, var(--primary-600), var(--primary-400));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    
+    /* Page Transition */
+    .page-transition {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: var(--primary-500);
+      z-index: 9999;
+      transform: translateY(100%);
+      pointer-events: none;
+    }
+    
+    /* Header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      transition: all var(--transition-medium);
+    }
+    
+    header.scrolled {
+      background-color: var(--header-bg);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      padding-top: 0.75rem;
+      padding-bottom: 0.75rem;
+    }
+    
+    header:not(.scrolled) {
+      background-color: transparent;
+      padding-top: 1.25rem;
+      padding-bottom: 1.25rem;
+    }
+    
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .logo-icon {
+      position: relative;
+      color: var(--primary-500);
+    }
+    
+    .logo-pulse {
+      position: absolute;
+      inset: -0.25rem;
+      border-radius: 9999px;
+      background-color: var(--primary-200);
+      z-index: -10;
+      animation: pulse 2s infinite;
+    }
+    
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(to right, var(--primary-600), var(--primary-400));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    
+    .logo-text p {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+    }
+    
+    /* Navigation */
+    .desktop-nav {
+      display: none;
+    }
+    
+    @media (min-width: 768px) {
+      .desktop-nav {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+      }
+    }
+    
+    .nav-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: color var(--transition-fast);
+      position: relative;
+    }
+    
+    .nav-link:hover {
+      color: var(--primary-500);
+    }
+    
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: var(--primary-500);
+      transition: width var(--transition-medium);
+    }
+    
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    
+    .btn-primary {
+      background-color: var(--primary-500);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--primary-600);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-outline {
+      background-color: transparent;
+      border: 1px solid var(--primary-300);
+      color: var(--primary-600);
+    }
+    
+    .btn-outline:hover {
+      background-color: var(--primary-50);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .mobile-menu-btn {
+      display: block;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+    
+    .mobile-menu-btn:hover {
+      color: var(--primary-500);
+    }
+    
+    @media (min-width: 768px) {
+      .mobile-menu-btn {
+        display: none;
+      }
+    }
+    
+    .mobile-nav {
+      display: none;
+      background-color: var(--bg-primary);
+      border-top: 1px solid var(--border-color);
+      overflow: hidden;
+      transition: all var(--transition-medium);
+    }
+    
+    .mobile-nav.open {
+      display: block;
+      animation: slideDown 0.3s ease forwards;
+    }
+    
+    .mobile-nav-content {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .mobile-nav-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 0.5rem 0;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: color var(--transition-fast);
+    }
+    
+    .mobile-nav-link:hover {
+      color: var(--primary-500);
+    }
+    
+    /* Theme Toggle */
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 9999px;
+      background-color: var(--bg-tertiary);
+      color: var(--text-secondary);
+      border: none;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      margin-left: 1rem;
+    }
+    
+    .theme-toggle:hover {
+      background-color: var(--primary-100);
+      color: var(--primary-600);
+    }
+    
+    /* Hero Section */
+    #home {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: 5rem;
+      padding-bottom: 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero-content {
+      max-width: 64rem;
+      margin: 0 auto;
+      text-align: center;
+      position: relative;
+      z-index: 10;
+    }
+    
+    .hero-title {
+      font-size: 3rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    @media (min-width: 768px) {
+      .hero-title {
+        font-size: 4.5rem;
+      }
+    }
+    
+    .hero-description {
+      font-size: 1.125rem;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      max-width: 36rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    @media (min-width: 768px) {
+      .hero-description {
+        font-size: 1.25rem;
+      }
+    }
+    
+    .hero-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      justify-content: center;
+    }
+    
+    @media (min-width: 640px) {
+      .hero-buttons {
+        flex-direction: row;
+      }
+    }
+    
+    .hero-btn {
+      padding: 1.5rem 2rem;
+      border-radius: 9999px;
+      font-size: 1.125rem;
+    }
+    
+    .hero-stats {
+      margin-top: 4rem;
+      padding: 1.5rem;
+      background-color: var(--card-bg);
+      backdrop-filter: blur(8px);
+      border-radius: 1rem;
+      box-shadow: var(--card-shadow);
+      border: 1px solid var(--border-color);
+      transition: background-color var(--transition-medium), box-shadow var(--transition-medium);
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    
+    @media (min-width: 768px) {
+      .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    
+    .stat-item {
+      text-align: center;
+      padding: 1rem;
+    }
+    
+    .stat-circle {
+      width: 4rem;
+      height: 4rem;
+      background-color: var(--primary-100);
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .stat-circle::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, var(--primary-300), var(--primary-500));
+      opacity: 0.3;
+      border-radius: 9999px;
+    }
+    
+    .stat-number {
+      color: var(--primary-500);
+      font-size: 1.5rem;
+      font-weight: 700;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .stat-label {
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+    
+    /* Services Section */
+    #services {
+      padding: 5rem 0;
+      background-color: var(--bg-secondary);
+      transition: background-color var(--transition-medium);
+    }
+    
+    .section-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    
+    .section-title {
+      font-size: 2.25rem;
+      margin-bottom: 1rem;
+    }
+    
+    @media (min-width: 768px) {
+      .section-title {
+        font-size: 2.5rem;
+      }
+    }
+    
+    .section-divider {
+      height: 0.25rem;
+      width: 5rem;
+      background-color: var(--primary-500);
+      margin: 0 auto 1.5rem;
+      border-radius: 9999px;
+    }
+    
+    .section-description {
+      color: var(--text-secondary);
+      max-width: 36rem;
+      margin: 0 auto;
+    }
+    
+    .tabs {
+      max-width: 64rem;
+      margin: 0 auto;
+    }
+    
+    .tabs-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    @media (min-width: 768px) {
+      .tabs-list {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+    
+    .tab-trigger {
+      padding: 0.75rem;
+      background-color: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      font-weight: 500;
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      color: var(--text-secondary);
+    }
+    
+    .tab-trigger:hover {
+      background-color: var(--primary-100);
+      color: var(--primary-600);
+    }
+    
+    .tab-trigger.active {
+      background-color: var(--primary-500);
+      color: white;
+      border-color: var(--primary-500);
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.5s ease forwards;
+    }
+    
+    .services-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    
+    @media (min-width: 768px) {
+      .services-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    
+    .service-card {
+      height: 100%;
+      border: 1px solid var(--border-color);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      background-color: var(--card-bg);
+      transition: all var(--transition-medium);
+      box-shadow: var(--card-shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(to right, var(--primary-400), var(--primary-600));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+    
+    .service-card:hover {
+      border-color: var(--primary-300);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      transform: translateY(-5px);
+    }
+    
+    .service-card:hover::before {
+      transform: scaleX(1);
+    }
+    
+    .service-icon-container {
+      width: 3rem;
+      height: 3rem;
+      background-color: var(--primary-100);
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      transition: background-color var(--transition-fast);
+    }
+    
+    .service-card:hover .service-icon-container {
+      background-color: var(--primary-200);
+      animation: pulse 2s infinite;
+    }
+    
+    .service-icon {
+      color: var(--primary-500);
+    }
+    
+    .service-title {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+    
+    .service-description {
+      color: var(--text-secondary);
+    }
+    
+    .service-price {
+      margin-top: 1rem;
+      font-weight: 600;
+      color: var(--primary-500);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .service-duration {
+      font-size: 0.875rem;
+      color: var(--text-tertiary);
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    
+    /* About Section */
+    #about {
+      padding: 5rem 0;
+      background-color: var(--bg-primary);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+    
+    @media (min-width: 1024px) {
+      .about-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    .about-text p {
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+    }
+    
+    .about-features {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    
+    @media (min-width: 640px) {
+      .about-features {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    
+    .feature-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 1rem;
+      background-color: var(--card-bg);
+      border-radius: 0.75rem;
+      box-shadow: var(--card-shadow);
+      transition: all var(--transition-medium);
+    }
+    
+    .feature-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .feature-icon {
+      color: var(--primary-500);
+      margin-bottom: 0.5rem;
+    }
+    
+    .feature-title {
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+    
+    .about-image {
+      position: relative;
+    }
+    
+    .about-circle {
+      aspect-ratio: 1 / 1;
+      background: linear-gradient(to bottom right, var(--primary-400), var(--primary-600));
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      margin: 0 auto;
+      max-width: 24rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .about-circle::before {
+      content: '';
+      position: absolute;
+      width: 150%;
+      height: 150%;
+      background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+      top: -25%;
+      left: -25%;
+      animation: rotate 10s linear infinite;
+    }
+    
+    @keyframes rotate {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    
+    .about-circle-icon {
+      color: white;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .about-stat {
+      position: absolute;
+      background-color: var(--card-bg);
+      padding: 1rem;
+      border-radius: 0.5rem;
+      box-shadow: var(--card-shadow);
+      transition: all var(--transition-medium);
+    }
+    
+    .about-stat:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .about-stat:nth-of-type(1) {
+      top: 25%;
+      left: -1rem;
+    }
+    
+    .about-stat:nth-of-type(2) {
+      top: 50%;
+      right: -1rem;
+    }
+    
+    .about-stat:nth-of-type(3) {
+      bottom: 25%;
+      left: -1rem;
+    }
+    
+    .about-stat p {
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+    
+    /* Testimonials Section */
+    #testimonials {
+      padding: 5rem 0;
+      background-color: var(--bg-secondary);
+      transition: background-color var(--transition-medium);
+    }
+    
+    .testimonials-container {
+      position: relative;
+      max-width: 80rem;
+      margin: 0 auto;
+    }
+    
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    
+    @media (min-width: 640px) {
+      .testimonials-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    @media (min-width: 1024px) {
+      .testimonials-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    
+    .testimonial-card {
+      height: 100%;
+      border: 1px solid var(--border-color);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      background-color: var(--card-bg);
+      transition: all var(--transition-medium);
+      box-shadow: var(--card-shadow);
+      position: relative;
+    }
+    
+    .testimonial-card::after {
+      content: '"';
+      position: absolute;
+      bottom: 1rem;
+      right: 1rem;
+      font-size: 4rem;
+      font-family: var(--font-serif);
+      color: var(--primary-100);
+      line-height: 0;
+      opacity: 0.5;
+    }
+    
+    .testimonial-card:hover {
+      border-color: var(--primary-300);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      transform: translateY(-5px);
+    }
+    
+    .testimonial-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .testimonial-avatar {
+      height: 3rem;
+      width: 3rem;
+      border-radius: 9999px;
+      background-color: var(--primary-100);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    
+    .testimonial-initials {
+      color: var(--primary-500);
+      font-weight: 500;
+    }
+    
+    .testimonial-info h3 {
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+    
+    .testimonial-stars {
+      display: flex;
+    }
+    
+    .star-icon {
+      color: #f59e0b;
+      fill: #f59e0b;
+    }
+    
+    .testimonial-text {
+      color: var(--text-secondary);
+      font-style: italic;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .testimonial-controls {
+      display: flex;
+      justify-content: center;
+      margin-top: 2rem;
+      gap: 1rem;
+    }
+    
+    .testimonial-button {
+      padding: 0.5rem;
+      border-radius: 9999px;
+      background-color: var(--primary-100);
+      color: var(--primary-500);
+      border: none;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    
+    .testimonial-button:hover {
+      background-color: var(--primary-200);
+      transform: translateY(-2px);
+    }
+    
+    /* Pricing Section */
+    #pricing {
+      padding: 5rem 0;
+      background-color: var(--bg-primary);
+      transition: background-color var(--transition-medium);
+    }
+    
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      max-width: 72rem;
+      margin: 0 auto;
+    }
+    
+    @media (min-width: 768px) {
+      .pricing-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    
+    @media (min-width: 768px) {
+      .pricing-plan.popular {
+        margin-top: -1rem;
+        margin-bottom: -1rem;
+      }
+    }
+    
+    .pricing-card {
+      height: 100%;
+      border: 1px solid var(--border-color);
+      border-radius: 0.75rem;
+      background-color: var(--card-bg);
+      box-shadow: var(--card-shadow);
+      position: relative;
+      transition: all var(--transition-medium);
+      overflow: hidden;
+    }
+    
+    .pricing-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .pricing-card.popular {
+      border-color: var(--primary-300);
+      box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.15);
+      z-index: 1;
+    }
+    
+    .popular-badge {
+      background-color: var(--primary-500);
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    
+    .pricing-header {
+      text-align: center;
+      padding: 1.5rem;
+      position: relative;
+    }
+    
+    .pricing-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 10%;
+      width: 80%;
+      height: 1px;
+      background-color: var(--border-color);
+    }
+    
+    .pricing-title {
+      font-size: 1.5rem;
+      font-family: var(--font-serif);
+      color: var(--text-primary);
+    }
+    
+    .pricing-description {
+      color: var(--text-tertiary);
+    }
+    
+    .pricing-content {
+      text-align: center;
+      padding: 0 1.5rem 1.5rem;
+    }
+    
+    .pricing-price {
+      margin-bottom: 1.5rem;
+      position: relative;
+      display: inline-block;
+    }
+    
+    .price-amount {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    
+    .price-currency {
+      color: var(--text-tertiary);
+      margin-left: 0.25rem;
+    }
+    
+    .pricing-features {
+      list-style-type: none;
+      text-align: left;
+      margin-bottom: 1.5rem;
+    }
+    
+    .pricing-feature {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+    
+    .feature-check {
+      color: var(--primary-500);
+      margin-right: 0.5rem;
+      flex-shrink: 0;
+    }
+    
+    .feature-text {
+      color: var(--text-secondary);
+    }
+    
+    .pricing-footer {
+      padding: 0 1.5rem 1.5rem;
+    }
+    
+    .pricing-btn {
+      width: 100%;
+      transition: all var(--transition-fast);
+    }
+    
+    .pricing-btn.popular {
+      background-color: var(--primary-500);
+      color: white;
+    }
+    
+    .pricing-btn.popular:hover {
+      background-color: var(--primary-600);
+      transform: translateY(-2px);
+    }
+    
+    .pricing-btn:not(.popular) {
+      background-color: var(--primary-100);
+      color: var(--primary-600);
+    }
+    
+    .pricing-btn:not(.popular):hover {
+      background-color: var(--primary-200);
+      transform: translateY(-2px);
+    }
+    
+    /* Contact Section */
+    #contact {
+      padding: 5rem 0;
+      background-color: var(--bg-secondary);
+      transition: background-color var(--transition-medium);
+    }
+    
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 3rem;
+      max-width: 80rem;
+      margin: 0 auto;
+    }
+    
+    @media (min-width: 1024px) {
+      .contact-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    
+    @media (min-width: 640px) {
+      .form-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .form-label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+    
+    .form-input,
+    .form-textarea,
+    .form-select {
+      padding: 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      font-family: var(--font-sans);
+      font-size: 1rem;
+      transition: all var(--transition-fast);
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+    }
+    
+    .form-input:focus,
+    .form-textarea:focus,
+    .form-select:focus {
+      outline: none;
+      border-color: var(--primary-500);
+      box-shadow: 0 0 0 2px rgba(255, 45, 94, 0.2);
+    }
+    
+    .form-textarea {
+      resize: vertical;
+      min-height: 8rem;
+    }
+    
+    .form-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236c757d'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      background-size: 1rem;
+      padding-right: 2.5rem;
+    }
+    
+    .contact-info {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    
+    .contact-card {
+      border: 1px solid var(--border-color);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      background-color: var(--card-bg);
+      box-shadow: var(--card-shadow);
+      transition: all var(--transition-medium);
+    }
+    
+    .contact-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .contact-details {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    
+    .contact-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    
+    .contact-icon-container {
+      background-color: var(--primary-100);
+      padding: 0.75rem;
+      border-radius: 9999px;
+      flex-shrink: 0;
+    }
+    
+    .contact-icon {
+      color: var(--primary-500);
+    }
+    
+    .contact-item-content h3 {
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+    
+    .contact-item-content p {
+      color: var(--text-secondary);
+    }
+    
+    .hours-title {
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+    }
+    
+    .hours-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+    
+    .hours-day {
+      color: var(--text-secondary);
+    }
+    
+    .hours-time {
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+    
+    /* Booking Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all var(--transition-medium);
+    }
+    
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .modal {
+      width: 90%;
+      max-width: 500px;
+      background-color: var(--card-bg);
+      border-radius: 1rem;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transform: translateY(20px);
+      transition: all var(--transition-medium);
+    }
+    
+    .modal-overlay.active .modal {
+      transform: translateY(0);
+    }
+    
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .modal-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      transition: color var(--transition-fast);
+    }
+    
+    .modal-close:hover {
+      color: var(--primary-500);
+    }
+    
+    .modal-body {
+      padding: 1.5rem;
+    }
+    
+    .modal-footer {
+      padding: 1.5rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+    
+    /* Footer */
+    footer {
+      background-color: var(--footer-bg);
+      color: var(--footer-text);
+      padding: 2.5rem 0;
+      transition: background-color var(--transition-medium);
+    }
+    
+    .footer-content {
+      text-align: center;
+    }
+    
+    .footer-title {
+      font-size: 1.5rem;
+      font-family: var(--font-serif);
+      margin-bottom: 1rem;
+      color: var(--footer-text);
+    }
+    
+    .footer-address {
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+      color: var(--footer-text);
+      opacity: 0.8;
+    }
+    
+    .footer-copyright {
+      font-size: 0.75rem;
+      color: var(--footer-text);
+      opacity: 0.6;
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        height: 0;
+      }
+      to {
+        opacity: 1;
+        height: auto;
+      }
+    }
+    
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.5;
+      }
+      50% {
+        transform: scale(1.2);
+        opacity: 0.3;
+      }
+    }
+    
+    /* Parallax Effect */
+    .parallax {
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .parallax-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 120%;
+      z-index: -1;
+      background-size: cover;
+      background-position: center;
+      transform: translateY(0);
+      will-change: transform;
+    }
+    
+    /* Canvas styles */
+    #p5-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+    
+    #three-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -2;
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.8s ease forwards;
+    }
+    
+    /* Floating elements */
+    .float {
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-20px);
+      }
+      100% {
+        transform: translateY(0px);
+      }
+    }
+    
+    /* Scroll Progress Bar */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background-color: var(--primary-500);
+      z-index: 100;
+      width: 0%;
+      transition: width 0.1s;
+    }
+  </style>
+</head>
+<body>
+  <!-- Scroll Progress Bar -->
+  <div class="scroll-progress" id="scroll-progress"></div>
+  
+  <!-- Page Transition -->
+  <div class="page-transition" id="page-transition"></div>
+  
+  <!-- Three.js Canvas -->
+  <canvas id="three-canvas"></canvas>
+  
+  <!-- p5.js Canvas Container -->
+  <div id="p5-canvas"></div>
+  
+  <!-- Header -->
+  <header id="header">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo-container">
+          <div class="logo-icon">
+            <i data-lucide="sparkles" width="32" height="32"></i>
+            <div class="logo-pulse"></div>
+          </div>
+          <div class="logo-text">
+            <h1>CK Salon</h1>
+            <p>Where Beauty Blossoms</p>
+          </div>
+        </div>
+        
+        <nav class="desktop-nav">
+          <a href="#home" class="nav-link">Home</a>
+          <a href="#services" class="nav-link">Services</a>
+          <a href="#about" class="nav-link">About</a>
+          <a href="#testimonials" class="nav-link">Testimonials</a>
+          <a href="#pricing" class="nav-link">Pricing</a>
+          <a href="#contact" class="nav-link">Contact</a>
+          <button class="btn btn-primary" id="book-now-btn">Book Now</button>
+          <button class="theme-toggle" id="theme-toggle">
+            <i data-lucide="sun" width="20" height="20" id="theme-icon"></i>
+          </button>
+        </nav>
+        
+        <div class="mobile-controls">
+          <button class="theme-toggle" id="mobile-theme-toggle">
+            <i data-lucide="sun" width="20" height="20" id="mobile-theme-icon"></i>
+          </button>
+          <button class="mobile-menu-btn" id="mobile-menu-btn">
+            <i data-lucide="menu" width="24" height="24"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="mobile-nav" id="mobile-nav">
+      <div class="container">
+        <div class="mobile-nav-content">
+          <a href="#home" class="mobile-nav-link">Home</a>
+          <a href="#services" class="mobile-nav-link">Services</a>
+          <a href="#about" class="mobile-nav-link">About</a>
+          <a href="#testimonials" class="mobile-nav-link">Testimonials</a>
+          <a href="#pricing" class="mobile-nav-link">Pricing</a>
+          <a href="#contact" class="mobile-nav-link">Contact</a>
+          <button class="btn btn-primary" id="mobile-book-now-btn">Book Now</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section id="home" class="parallax">
+    <div class="parallax-bg" id="hero-parallax"></div>
+    <div class="container">
+      <div class="hero-content">
+        <h1 class="hero-title text-gradient fade-in">Elevate Your Natural Beauty</h1>
+        <p class="hero-description fade-in">
+          At CK Salon, we craft personalized beauty experiences that enhance your unique features. 
+          Step into luxury, leave with confidence.
+        </p>
+        <div class="hero-buttons fade-in">
+          <button class="btn btn-primary hero-btn" id="hero-book-btn">Book Your Experience</button>
+          <a href="#services" class="btn btn-outline hero-btn">Explore Services</a>
+        </div>
+        
+        <div class="hero-stats fade-in">
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-circle">
+                <span class="stat-number" id="years-counter">0</span>
+              </div>
+              <h3 class="stat-label">Years Experience</h3>
+            </div>
+            <div class="stat-item">
+              <div class="stat-circle">
+                <span class="stat-number" id="clients-counter">0</span>
+              </div>
+              <h3 class="stat-label">Happy Clients</h3>
+            </div>
+            <div class="stat-item">
+              <div class="stat-circle">
+                <span class="stat-number" id="stylists-counter">0</span>
+              </div>
+              <h3 class="stat-label">Expert Stylists</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section id="services">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title text-gradient">Our Signature Services</h2>
+        <div class="section-divider"></div>
+        <p class="section-description">
+          Indulge in a world of beauty with our expertly crafted services tailored just for you.
+        </p>
+      </div>
+      
+      <div class="tabs">
+        <div class="tabs-list">
+          <button class="tab-trigger active" data-tab="hair">Hair Services</button>
+          <button class="tab-trigger" data-tab="skin">Skin Care</button>
+          <button class="tab-trigger" data-tab="nails">Nail Care</button>
+          <button class="tab-trigger" data-tab="makeup">Makeup</button>
+        </div>
+        
+        <div class="tab-content active" id="hair-tab">
+          <div class="services-grid">
+            <div class="service-card fade-in">
+              <div class="service-icon-container">
+                <i data-lucide="scissors" class="service-icon" width="24" height="24"></i>
+              </div>
+              <h3 class="service-title">Precision Haircuts</h3>
+              <p class="service-description">Tailored cuts that enhance your features and style</p>
+              <div class="service-price">
+                <span>₹2,500 LKR</span>
+                <span class="service-duration">
+                  <i data-lucide="clock" width="14" height="14"></i> 45 min
+                </span>
+              </div>
+            </div>
+            <div class="service-card fade-in">
+              <div class="service-icon-container">
+                <i data-lucide="palette" class="service-icon" width="24" height="24"></i>
+              </div>
+              <h3 class="service-title">Color & Highlights</h3>
+              <p class="service-description">Vibrant, long-lasting colors to make you shine</p>
+              <div class="service-price">
+                <span>₹4,500 LKR</span>
+                <span class="service-duration">
+                  <i data-lucide="clock" width="14" height="14"></i> 120 min
+                </span>
+              </div>
+            </div>
+            <div class="service-card fade-in">
+              <div class="service-icon-container">
+                <i data-lucide="sparkles" class="service-icon" width="24" height="24"></i>
+              </div>
+              <h3 class="service-title">Hair Treatments</h3>
+              <p class="service-description">Revitalize and nourish your hair with premium treatments</p>
+              <div class="service-price">
+                <span>₹3,200 LKR</span>
+                <span class="service-duration">
+                  <i data-lucide="clock" width="14" height="14"></i> 60 min
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="tab-content" id="skin-tab">
+          <div class="services-grid">
+            <div class="service-card">
+              <div class="service-icon-container">
+                <i data-lucide="droplet" class="service-icon" width="24" height="24"></i>
+              </div>
+              <h3 class="service-title">Hydrating Facials</h3>
+              <p class="service-description">Deep hydration for a radiant, glowing complexion</p>
+              <div class="service-price">
+                <span>₹3,800 LKR</span>
+                <span class="service-duration">
+                  <i data-lucide="clock" width="14" height="14"></i> 60 min
+                </span>
+              </div>
+            </div>
+            <div class="service-card">
+              <div class="service-icon-container">
+                <i data-lucide="flower" class="service-icon" width="24" height="24"></i>
+              </div>
+              <h3 class="service-title">Anti-Aging Treatments</h3>
+              <p class="service-description">Turn back time with our advanced anti-aging solutions</p>
+              <div class="service-price">
+                <span>₹5,200 LKR</span>
+                <span class="service-duration">
+                  <i data-lucide="clock" width="14" height="14"></i> 75 min
+                </span>
+              </div>
+            </div>
+            <div class="service-card">
+              <div class="service-icon-container">
+                <i data-lucide="star" class="service-icon" width="24" height="24"></i>
+              </div>
+              <h3 class="service-title">Skin Rejuvenation</h3>
+              <p class="service-description">Restore your skin's natural beauty and vitality</p>
+              <div class="service-price">
+                <span>₹4,500 LKR</span>
+                <span class="service-duration">
+                  <i data-lucide="clock" width="14" height="14"></i> 90 min
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="tab-content" id="nails-tab">
+          <div class="services-grid">
+            <div class="service-card">
+              <div class="service-icon-container">
+                <i data-lucide="gem" class="service-icon" width="24" height="24"></i>
+              </div>
+              <h3 class="service-title">Luxury Manicure</h3>
+              <p class="service-description">Pamper your hands with our premium manicure service</p>
+              <div class="service-price">
+                <span>₹1,800 LKR</span>
+                <span class="service-duration">
+                  <i data-lucide="clock" width="14" height="14"></i> 45 min
+                </span>
+              </div>
+            </div>
+            <div class="service-card">
+              <div class="service-icon-container">
+                <i data-lucide="heart" class="service-icon" width="24" height="24"></i>
+              </div>
+              <h3 class="service-title">Spa Pedicure</h3>
+              <p class="service-description">Revitalize your feet with our relaxing spa pedicure</p>
+              <div class="service-price">
+                <span>₹2,200 LKR</span>
+                <span class="service-duration">
+                  <i data-lucide="clock" width="14" height="14"></i> 60 min
+                </span>
+              </div>
+            </div>
+            <div class="service-card">
+              <div class="service-icon-container">
+                <i data-lucide="sparkles" class="service-icon" width="24" height="24"></i>
+              </div>
+              <h3 class="service-title">Gel Extensions</h3>
+              <p class="service-description">Beautiful, durable nail extensions that last for weeks</p>
+              <div class="service-price">
+                <span>₹3,500 LKR</span>
+                <span class="service-duration">
+                  <i data-lucide="clock" width="14" height="14"></i> 90 min
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="tab-content" id="makeup-tab">
+          <div class="services-grid">
+            <div class="service-card">
+              <div class="service-icon-container">
+                <i data-lucide="sparkles" class="service-icon" width="24" height="24"></i>
+              </div>
+              <h3 class="service-title">Natural Makeup</h3>
+              <p class="service-description">Enhance your natural beauty with subtle makeup</p>
+              <div class="service-price">
+                <span>₹2,800 LKR</span>
+                <span class="service-duration">
+                  <i data-lucide="clock" width="14" height="14"></i> 45 min
+                </span>
+              </div>
+            </div>
+            <div class="service-card">
+              <div class="service-icon-container">
+                <i data-lucide="star" class="service-icon" width="24" height="24"></i>
+              </div>
+              <h3 class="service-title">Bridal Makeup</h3>
+              <p class="service-description">Look stunning on your special day with our bridal makeup</p>
+              <div class="service-price">
+                <span>₹8,500 LKR</span>
+                <span class="service-duration">
+                  <i data-lucide="clock" width="14" height="14"></i> 120 min
+                </span>
+              </div>
+            </div>
+            <div class="service-card">
+              <div class="service-icon-container">
+                <i data-lucide="party-popper" class="service-icon" width="24" height="24"></i>
+              </div>
+              <h3 class="service-title">Special Occasion</h3>
+              <p class="service-description">Perfect makeup for parties, events, and celebrations</p>
+              <div class="service-price">
+                <span>₹4,200 LKR</span>
+                <span class="service-duration">
+                  <i data-lucide="clock" width="14" height="14"></i> 60 min
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-text fade-in">
+          <h2 class="section-title text-gradient">About CK Salon</h2>
+          <div class="section-divider"></div>
+          <p>
+            Nestled in the heart of Gampaha, CK Salon has been transforming lives through beauty for over a decade. Our expert team blends artistry with innovation to bring out your best self.
+          </p>
+          <p>
+            From luxurious hair treatments to radiant skincare, we're committed to excellence in every detail. Our salon combines cutting-edge techniques with premium products to deliver results that exceed expectations.
+          </p>
+          
+          <div class="about-features">
+            <div class="feature-item">
+              <i data-lucide="award" class="feature-icon" width="32" height="32"></i>
+              <h3 class="feature-title">Premium Quality</h3>
+            </div>
+            <div class="feature-item">
+              <i data-lucide="users" class="feature-icon" width="32" height="32"></i>
+              <h3 class="feature-title">Expert Team</h3>
+            </div>
+            <div class="feature-item">
+              <i data-lucide="clock" class="feature-icon" width="32" height="32"></i>
+              <h3 class="feature-title">Timely Service</h3>
+            </div>
+          </div>
+        </div>
+        
+        <div class="about-image fade-in">
+          <div class="about-circle float">
+            <i data-lucide="sparkles" class="about-circle-icon" width="96" height="96"></i>
+          </div>
+          
+          <div class="about-stat">
+            <p>10+ Years Experience</p>
+          </div>
+          
+          <div class="about-stat">
+            <p>20+ Expert Stylists</p>
+          </div>
+          
+          <div class="about-stat">
+            <p>5000+ Happy Clients</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section id="testimonials">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title text-gradient">Client Love</h2>
+        <div class="section-divider"></div>
+        <p class="section-description">
+          Hear from those who've experienced the CK magic and transformed their beauty journey.
+        </p>
+      </div>
+      
+      <div class="testimonials-container">
+        <div class="testimonials-grid" id="testimonials-grid">
+          <!-- Testimonials will be inserted here by JavaScript -->
+        </div>
+        
+        <div class="testimonial-controls">
+          <button class="testimonial-button" id="prev-testimonial">
+            <i data-lucide="chevron-left" width="24" height="24"></i>
+          </button>
+          <button class="testimonial-button" id="next-testimonial">
+            <i data-lucide="chevron-right" width="24" height="24"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing Section -->
+  <section id="pricing">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title text-gradient">Beauty Packages</h2>
+        <div class="section-divider"></div>
+        <p class="section-description">
+          Choose the perfect package for your beauty needs and budget.
+        </p>
+      </div>
+      
+      <div class="pricing-grid">
+        <div class="pricing-plan fade-in">
+          <div class="pricing-card">
+            <div class="pricing-header">
+              <h3 class="pricing-title">Essential Beauty</h3>
+              <p class="pricing-description">Perfect for a quick refresh</p>
+            </div>
+            <div class="pricing-content">
+              <div class="pricing-price">
+                <span class="price-amount">₹4,500</span>
+                <span class="price-currency">LKR</span>
+              </div>
+              <ul class="pricing-features">
+                <li class="pricing-feature">
+                  <i data-lucide="check" class="feature-check" width="20" height="20"></i>
+                  <span class="feature-text">Haircut & Style</span>
+                </li>
+                <li class="pricing-feature">
+                  <i data-lucide="check" class="feature-check" width="20" height="20"></i>
+                  <span class="feature-text">Express Facial</span>
+                </li>
+                <li class="pricing-feature">
+                  <i data-lucide="check" class="feature-check" width="20" height="20"></i>
+                  <span class="feature-text">Eyebrow Shaping</span>
+                </li>
+                <li class="pricing-feature">
+                  <i data-lucide="check" class="feature-check" width="20" height="20"></i>
+                  <span class="feature-text">Hand Massage</span>
+                </li>
+              </ul>
+            </div>
+            <div class="pricing-footer">
+              <button class="btn pricing-btn package-btn" data-package="Essential Beauty">Book Now</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="pricing-plan popular fade-in">
+          <div class="pricing-card popular">
+            <div class="popular-badge">Most Popular</div>
+            <div class="pricing-header">
+              <h3 class="pricing-title">Signature Experience</h3>
+              <p class="pricing-description">Our most popular package</p>
+            </div>
+            <div class="pricing-content">
+              <div class="pricing-price">
+                <span class="price-amount">₹8,900</span>
+                <span class="price-currency">LKR</span>
+              </div>
+              <ul class="pricing-features">
+                <li class="pricing-feature">
+                  <i data-lucide="check" class="feature-check" width="20" height="20"></i>
+                  <span class="feature-text">Premium Haircut & Style</span>
+                </li>
+                <li class="pricing-feature">
+                  <i data-lucide="check" class="feature-check" width="20" height="20"></i>
+                  <span class="feature-text">Deep Cleansing Facial</span>
+                </li>
+                <li class="pricing-feature">
+                  <i data-lucide="check" class="feature-check" width="20" height="20"></i>
+                  <span class="feature-text">Hair Treatment</span>
+                </li>
+                <li class="pricing-feature">
+                  <i data-lucide="check" class="feature-check" width="20" height="20"></i>
+                  <span class="feature-text">Eyebrow & Lash Tinting</span>
+                </li>
+                <li class="pricing-feature">
+                  <i data-lucide="check" class="feature-check" width="20" height="20"></i>
+                  <span class="feature-text">Hand & Foot Massage</span>
+                </li>
+                <li class="pricing-feature">
+                  <i data-lucide="check" class="feature-check" width="20" height="20"></i>
+                  <span class="feature-text">Complimentary Beverage</span>
+                </li>
+              </ul>
+            </div>
+            <div class="pricing-footer">
+              <button class="btn pricing-btn popular package-btn" data-package="Signature Experience">Book Now</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="pricing-plan fade-in">
+          <div class="pricing-card">
+            <div class="pricing-header">
+              <h3 class="pricing-title">Luxury Retreat</h3>
+              <p class="pricing-description">The ultimate pampering experience</p>
+            </div>
+            <div class="pricing-content">
+              <div class="pricing-price">
+                <span class="price-amount">₹15,000</span>
+                <span class="price-currency">LKR</span>
+              </div>
+              <ul class="pricing-features">
+                <li class="pricing-feature">
+                  <i data-lucide="check" class="feature-check" width="20" height="20"></i>
+                  <span class="feature-text">Premium Haircut & Style</span>
+                </li>
+                <li class="pricing-feature">
+                  <i data-lucide="check" class="feature-check" width="20" height="20"></i>
+                  <span class="feature-text">Advanced Facial Treatment</span>
+                </li>
+                <li class="pricing-feature">
+                  <i data-lucide="check" class="feature-check" width="20" height="20"></i>
+                  <span class="feature-text">Hair Color or Highlights</span>
+                </li>
+                <li class="pricing-feature">
+                  <i data-lucide="check" class="feature-check" width="20" height="20"></i>
+                  <span class="feature-text">Deep Conditioning Treatment</span>
+                </li>
+                <li class="pricing-feature">
+                  <i data-lucide="check" class="feature-check" width="20" height="20"></i>
+                  <span class="feature-text">Full Body Massage</span>
+                </li>
+                <li class="pricing-feature">
+                  <i data-lucide="check" class="feature-check" width="20" height="20"></i>
+                  <span class="feature-text">Manicure & Pedicure</span>
+                </li>
+                <li class="pricing-feature">
+                  <i data-lucide="check" class="feature-check" width="20" height="20"></i>
+                  <span class="feature-text">Makeup Application</span>
+                </li>
+                <li class="pricing-feature">
+                  <i data-lucide="check" class="feature-check" width="20" height="20"></i>
+                  <span class="feature-text">Complimentary Lunch & Beverage</span>
+                </li>
+              </ul>
+            </div>
+            <div class="pricing-footer">
+              <button class="btn pricing-btn package-btn" data-package="Luxury Retreat">Book Now</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title text-gradient">Get In Touch</h2>
+        <div class="section-divider"></div>
+        <p class="section-description">
+          Have questions or ready to book your appointment? Reach out to us.
+        </p>
+      </div>
+      
+      <div class="contact-grid">
+        <div class="contact-form-container fade-in">
+          <form class="contact-form" id="contact-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="name" class="form-label">Your Name</label>
+                <input type="text" id="name" name="name" class="form-input" placeholder="John Doe" required>
+              </div>
+              <div class="form-group">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" id="email" name="email" class="form-input" placeholder="john@example.com" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="phone" class="form-label">Phone Number</label>
+              <input type="tel" id="phone" name="phone" class="form-input" placeholder="+94 123 456 789">
+            </div>
+            <div class="form-group">
+              <label for="message" class="form-label">Your Message</label>
+              <textarea id="message" name="message" class="form-textarea" placeholder="Tell us what you're looking for..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">
+              <i data-lucide="send" width="16" height="16" style="margin-right: 8px;"></i>
+              Send Message
+            </button>
+          </form>
+        </div>
+        
+        <div class="contact-info fade-in">
+          <div class="contact-card">
+            <div class="contact-details">
+              <div class="contact-item">
+                <div class="contact-icon-container">
+                  <i data-lucide="phone" class="contact-icon" width="24" height="24"></i>
+                </div>
+                <div class="contact-item-content">
+                  <h3>Phone</h3>
+                  <p>+94 112 345 678</p>
+                  <p>+94 777 123 456</p>
+                </div>
+              </div>
+              
+              <div class="contact-item">
+                <div class="contact-icon-container">
+                  <i data-lucide="mail" class="contact-icon" width="24" height="24"></i>
+                </div>
+                <div class="contact-item-content">
+                  <h3>Email</h3>
+                  <p>info@cksalon.com</p>
+                  <p>bookings@cksalon.com</p>
+                </div>
+              </div>
+              
+              <div class="contact-item">
+                <div class="contact-icon-container">
+                  <i data-lucide="map-pin" class="contact-icon" width="24" height="24"></i>
+                </div>
+                <div class="contact-item-content">
+                  <h3>Location</h3>
+                  <p>123 Beauty Street,</p>
+                  <p>Gampaha, Sri Lanka</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="contact-card">
+            <h3 class="hours-title">Business Hours</h3>
+            <div class="hours-item">
+              <span class="hours-day">Monday - Friday</span>
+              <span class="hours-time">9:00 AM - 8:00 PM</span>
+            </div>
+            <div class="hours-item">
+              <span class="hours-day">Saturday</span>
+              <span class="hours-time">9:00 AM - 6:00 PM</span>
+            </div>
+            <div class="hours-item">
+              <span class="hours-day">Sunday</span>
+              <span class="hours-time">10:00 AM - 4:00 PM</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <h3 class="footer-title">CK Salon</h3>
+        <p class="footer-address">123 Beauty Street, Gampaha, Sri Lanka | +94 112 345 678</p>
+        <p class="footer-copyright">© <span id="current-year"></span> CK Salon. All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Booking Modal -->
+  <div class="modal-overlay" id="booking-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Book Your Appointment</h3>
+        <button class="modal-close" id="close-modal">
+          <i data-lucide="x" width="24" height="24"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="booking-form">
+          <div class="form-group">
+            <label for="booking-name" class="form-label">Your Name</label>
+            <input type="text" id="booking-name" name="booking-name" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label for="booking-email" class="form-label">Email Address</label>
+            <input type="email" id="booking-email" name="booking-email" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label for="booking-phone" class="form-label">Phone Number</label>
+            <input type="tel" id="booking-phone" name="booking-phone" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label for="booking-service" class="form-label">Service</label>
+            <select id="booking-service" name="booking-service" class="form-select" required>
+              <option value="">Select a service</option>
+              <option value="haircut">Precision Haircut</option>
+              <option value="color">Color & Highlights</option>
+              <option value="treatment">Hair Treatment</option>
+              <option value="facial">Hydrating Facial</option>
+              <option value="anti-aging">Anti-Aging Treatment</option>
+              <option value="manicure">Luxury Manicure</option>
+              <option value="pedicure">Spa Pedicure</option>
+              <option value="makeup">Makeup Application</option>
+              <option value="package-essential">Essential Beauty Package</option>
+              <option value="package-signature">Signature Experience Package</option>
+              <option value="package-luxury">Luxury Retreat Package</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="booking-date" class="form-label">Preferred Date</label>
+              <input type="date" id="booking-date" name="booking-date" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label for="booking-time" class="form-label">Preferred Time</label>
+              <input type="time" id="booking-time" name="booking-time" class="form-input" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="booking-notes" class="form-label">Special Requests</label>
+            <textarea id="booking-notes" name="booking-notes" class="form-textarea" placeholder="Any special requests or notes for your appointment..."></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="cancel-booking">Cancel</button>
+        <button class="btn btn-primary" id="confirm-booking">Confirm Booking</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+    
+    // Current year for footer
+    document.getElementById('current-year').textContent = new Date().getFullYear();
+    
+    // Theme Toggle
+    const html = document.documentElement;
+    const themeToggle = document.getElementById('theme-toggle');
+    const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    const mobileThemeIcon = document.getElementById('mobile-theme-icon');
+    
+    // Check for saved theme preference or use device preference
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+      html.classList.remove('light-theme');
+      html.classList.add('dark-theme');
+      themeIcon.setAttribute('data-lucide', 'moon');
+      mobileThemeIcon.setAttribute('data-lucide', 'moon');
+    } else {
+      html.classList.remove('dark-theme');
+      html.classList.add('light-theme');
+      themeIcon.setAttribute('data-lucide', 'sun');
+      mobileThemeIcon.setAttribute('data-lucide', 'sun');
+    }
+    
+    function toggleTheme() {
+      if (html.classList.contains('light-theme')) {
+        html.classList.remove('light-theme');
+        html.classList.add('dark-theme');
+        localStorage.setItem('theme', 'dark');
+        themeIcon.setAttribute('data-lucide', 'moon');
+        mobileThemeIcon.setAttribute('data-lucide', 'moon');
+      } else {
+        html.classList.remove('dark-theme');
+        html.classList.add('light-theme');
+        localStorage.setItem('theme', 'light');
+        themeIcon.setAttribute('data-lucide', 'sun');
+        mobileThemeIcon.setAttribute('data-lucide', 'sun');
+      }
+      lucide.createIcons();
+      
+      // Update Three.js and p5.js backgrounds
+      updateBackgrounds();
+    }
+    
+    themeToggle.addEventListener('click', toggleTheme);
+    mobileThemeToggle.addEventListener('click', toggleTheme);
+    
+    // Mobile menu toggle
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileNav = document.getElementById('mobile-nav');
+    
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileNav.classList.toggle('open');
+      
+      // Change icon based on menu state
+      const icon = mobileMenuBtn.querySelector('i');
+      if (mobileNav.classList.contains('open')) {
+        icon.setAttribute('data-lucide', 'x');
+      } else {
+        icon.setAttribute('data-lucide', 'menu');
+      }
+      lucide.createIcons();
+    });
+    
+    // Close mobile menu when clicking a link
+    document.querySelectorAll('.mobile-nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileNav.classList.remove('open');
+        mobileMenuBtn.querySelector('i').setAttribute('data-lucide', 'menu');
+        lucide.createIcons();
+      });
+    });
+    
+    // Header scroll effect
+    const header = document.getElementById('header');
+    
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 10) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
+    
+    // Scroll Progress Bar
+    const scrollProgress = document.getElementById('scroll-progress');
+    
+    window.addEventListener('scroll', () => {
+      const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+      const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrollPercentage = (scrollTop / scrollHeight) * 100;
+      
+      scrollProgress.style.width = scrollPercentage + '%';
+    });
+    
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Show page transition
+        const pageTransition = document.getElementById('page-transition');
+        pageTransition.style.transform = 'translateY(0)';
+        
+        setTimeout(() => {
+          const targetId = this.getAttribute('href');
+          const targetElement = document.querySelector(targetId);
+          
+          if (targetElement) {
+            window.scrollTo({
+              top: targetElement.offsetTop - 80,
+              behavior: 'smooth'
+            });
+          }
+          
+          // Hide page transition
+          setTimeout(() => {
+            pageTransition.style.transform = 'translateY(100%)';
+          }, 300);
+        }, 300);
+      });
+    });
+    
+    // Tabs functionality
+    const tabTriggers = document.querySelectorAll('.tab-trigger');
+    
+    tabTriggers.forEach(trigger => {
+      trigger.addEventListener('click', () => {
+        // Remove active class from all triggers and content
+        tabTriggers.forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => {
+          content.classList.remove('active');
+        });
+        
+        // Add active class to clicked trigger and corresponding content
+        trigger.classList.add('active');
+        const tabId = trigger.getAttribute('data-tab');
+        document.getElementById(`${tabId}-tab`).classList.add('active');
+      });
+    });
+    
+    // Testimonials carousel
+    const testimonials = [
+      {
+        id: 1,
+        name: "Nethmi R.",
+        text: "CK Salon turned my hair into a masterpiece! The stylists truly understand what works for different face shapes and personalities. I've never felt more confident with my look.",
+        rating: 5,
+        initials: "NR",
+      },
+      {
+        id: 2,
+        name: "Kavya S.",
+        text: "The best facial I've ever had—pure bliss! My skin has never looked better. The attention to detail and personalized approach makes CK Salon stand out from the rest.",
+        rating: 5,
+        initials: "KS",
+      },
+      {
+        id: 3,
+        name: "Amaya P.",
+        text: "I felt like royalty from start to finish. The ambiance, the service, the results—everything was perfect. CK Salon has become my go-to place for all beauty needs.",
+        rating: 5,
+        initials: "AP",
+      },
+      {
+        id: 4,
+        name: "Dinesh M.",
+        text: "As a man who was hesitant about salon treatments, CK Salon made me feel comfortable and delivered exceptional results. Their men's grooming services are top-notch!",
+        rating: 5,
+        initials: "DM",
+      },
+      {
+        id: 5,
+        name: "Lakshmi T.",
+        text: "The color specialists at CK Salon are true artists. They transformed my dull hair into a vibrant masterpiece that perfectly complements my skin tone.",
+        rating: 5,
+        initials: "LT",
+      },
+    ];
+    
+    let activeIndex = 0;
+    const testimonialsGrid = document.getElementById('testimonials-grid');
+    const prevBtn = document.getElementById('prev-testimonial');
+    const nextBtn = document.getElementById('next-testimonial');
+    
+    function renderTestimonials() {
+      // Clear the grid
+      testimonialsGrid.innerHTML = '';
+      
+      // Calculate how many testimonials to show based on screen width
+      let count = 1;
+      if (window.innerWidth >= 1024) {
+        count = 3;
+      } else if (window.innerWidth >= 640) {
+        count = 2;
+      }
+      
+      // Render the visible testimonials
+      for (let i = 0; i < count; i++) {
+        const index = (activeIndex + i) % testimonials.length;
+        const testimonial = testimonials[index];
+        
+        const testimonialCard = document.createElement('div');
+        testimonialCard.className = 'testimonial-card fade-in';
+        
+        const starsHtml = Array(5).fill().map((_, i) => 
+          `<i data-lucide="star" class="star-icon" width="16" height="16"></i>`
+        ).join('');
+        
+        testimonialCard.innerHTML = `
+          <div class="testimonial-header">
+            <div class="testimonial-avatar">
+              <span class="testimonial-initials">${testimonial.initials}</span>
+            </div>
+            <div class="testimonial-info">
+              <h3>${testimonial.name}</h3>
+              <div class="testimonial-stars">
+                ${starsHtml}
+              </div>
+            </div>
+          </div>
+          <p class="testimonial-text">"${testimonial.text}"</p>
+        `;
+        
+        testimonialsGrid.appendChild(testimonialCard);
+      }
+      
+      // Initialize icons in the newly added content
+      lucide.createIcons();
+    }
+    
+    // Initial render
+    renderTestimonials();
+    
+    // Handle navigation
+    prevBtn.addEventListener('click', () => {
+      activeIndex = activeIndex === 0 ? testimonials.length - 1 : activeIndex - 1;
+      renderTestimonials();
+    });
+    
+    nextBtn.addEventListener('click', () => {
+      activeIndex = (activeIndex + 1) % testimonials.length;
+      renderTestimonials();
+    });
+    
+    // Update testimonials on window resize
+    window.addEventListener('resize', renderTestimonials);
+    
+    // Contact form submission
+    const contactForm = document.getElementById('contact-form');
+    
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      // Show page transition
+      const pageTransition = document.getElementById('page-transition');
+      pageTransition.style.transform = 'translateY(0)';
+      
+      setTimeout(() => {
+        // In a real implementation, you would send the form data to a server
+        // For this demo, we'll just show an alert
+        alert('Thank you for your message! We\'ll get back to you soon.');
+        contactForm.reset();
+        
+        // Hide page transition
+        pageTransition.style.transform = 'translateY(100%)';
+      }, 500);
+    });
+    
+    // Booking Modal
+    const bookingModal = document.getElementById('booking-modal');
+    const bookNowBtn = document.getElementById('book-now-btn');
+    const mobileBookNowBtn = document.getElementById('mobile-book-now-btn');
+    const heroBookBtn = document.getElementById('hero-book-btn');
+    const packageBtns = document.querySelectorAll('.package-btn');
+    const closeModalBtn = document.getElementById('close-modal');
+    const cancelBookingBtn = document.getElementById('cancel-booking');
+    const confirmBookingBtn = document.getElementById('confirm-booking');
+    const bookingForm = document.getElementById('booking-form');
+    const bookingServiceSelect = document.getElementById('booking-service');
+    
+    function openBookingModal(service = '') {
+      bookingModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      
+      if (service) {
+        // Set the selected service in the dropdown
+        const options = Array.from(bookingServiceSelect.options);
+        const option = options.find(opt => opt.text.includes(service));
+        if (option) {
+          bookingServiceSelect.value = option.value;
+        }
+      }
+    }
+    
+    function closeBookingModal() {
+      bookingModal.classList.remove('active');
+      document.body.style.overflow = '';
+      bookingForm.reset();
+    }
+    
+    bookNowBtn.addEventListener('click', () => openBookingModal());
+    mobileBookNowBtn.addEventListener('click', () => openBookingModal());
+    heroBookBtn.addEventListener('click', () => openBookingModal());
+    
+    packageBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const packageName = btn.getAttribute('data-package');
+        openBookingModal(packageName);
+      });
+    });
+    
+    closeModalBtn.addEventListener('click', closeBookingModal);
+    cancelBookingBtn.addEventListener('click', closeBookingModal);
+    
+    confirmBookingBtn.addEventListener('click', () => {
+      // Check if form is valid
+      const isValid = Array.from(bookingForm.elements).every(element => {
+        if (element.hasAttribute('required')) {
+          return element.value.trim() !== '';
+        }
+        return true;
+      });
+      
+      if (isValid) {
+        // Show page transition
+        const pageTransition = document.getElementById('page-transition');
+        pageTransition.style.transform = 'translateY(0)';
+        
+        setTimeout(() => {
+          // In a real implementation, you would send the booking data to a server
+          alert('Your appointment has been booked! We look forward to seeing you.');
+          closeBookingModal();
+          
+          // Hide page transition
+          pageTransition.style.transform = 'translateY(100%)';
+        }, 500);
+      } else {
+        alert('Please fill in all required fields.');
+      }
+    });
+    
+    // Close modal when clicking outside
+    bookingModal.addEventListener('click', (e) => {
+      if (e.target === bookingModal) {
+        closeBookingModal();
+      }
+    });
+    
+    // Three.js background
+    let threeJsScene, threeJsCamera, threeJsRenderer, torus, particles, particleGroup;
+    
+    function initThreeJsBackground() {
+      const canvas = document.getElementById('three-canvas');
+      threeJsRenderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+      threeJsRenderer.setSize(window.innerWidth, window.innerHeight);
+      
+      threeJsScene = new THREE.Scene();
+      threeJsCamera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+      threeJsCamera.position.z = 10;
+      
+      // Add ambient light
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+      threeJsScene.add(ambientLight);
+      
+      // Add point light
+      const pointLight = new THREE.PointLight(0xffffff, 0.8);
+      pointLight.position.set(10, 10, 10);
+      threeJsScene.add(pointLight);
+      
+      // Create a torus for beauty element
+      const torusGeometry = new THREE.TorusGeometry(1.5, 0.2, 16, 100);
+      const torusMaterial = new THREE.MeshStandardMaterial({ 
+        color: 0xff2d5e,
+        metalness: 0.5,
+        roughness: 0.2,
+        emissive: 0xff2d5e,
+        emissiveIntensity: 0.2
+      });
+      torus = new THREE.Mesh(torusGeometry, torusMaterial);
+      torus.position.z = -2;
+      threeJsScene.add(torus);
+      
+      // Create floating particles
+      particles = [];
+      const particleCount = 50;
+      particleGroup = new THREE.Group();
+      threeJsScene.add(particleGroup);
+      
+      for (let i = 0; i < particleCount; i++) {
+        const geometry = new THREE.SphereGeometry(0.05, 8, 8);
+        const material = new THREE.MeshStandardMaterial({
+          color: 0xff2d5e,
+          emissive: 0xff2d5e,
+          emissiveIntensity: 0.5,
+          transparent: true,
+          opacity: 0.7
+        });
+        
+        const particle = new THREE.Mesh(geometry, material);
+        
+        // Random position
+        particle.position.set(
+          (Math.random() - 0.5) * 20,
+          (Math.random() - 0.5) * 20,
+          (Math.random() - 0.5) * 20
+        );
+        
+        // Store additional properties for animation
+        particle.userData = {
+          speed: Math.random() * 0.02 + 0.01,
+          rotationSpeed: (Math.random() - 0.5) * 0.01,
+        };
+        
+        particleGroup.add(particle);
+        particles.push(particle);
+      }
+      
+      updateBackgrounds(); // Apply theme-specific settings
+      
+      // Animation loop
+      function animate() {
+        requestAnimationFrame(animate);
+        
+        // Rotate torus
+        torus.rotation.x += 0.005;
+        torus.rotation.y += 0.01;
+        
+        // Animate particles
+        const time = Date.now() * 0.001;
+        
+        particleGroup.rotation.y = time * 0.05;
+        
+        particles.forEach((particle, i) => {
+          // Move particles in a gentle wave pattern
+          particle.position.y += Math.sin(time + i) * 0.005;
+          particle.position.x += Math.cos(time + i * 0.5) * 0.005;
+          
+          // Rotate particles
+          particle.rotation.x += particle.userData.rotationSpeed;
+          particle.rotation.z += particle.userData.rotationSpeed * 0.5;
+          
+          // Reset position if particles go too far
+          if (particle.position.length() > 15) {
+            particle.position.set(
+              (Math.random() - 0.5) * 10,
+              (Math.random() - 0.5) * 10,
+              (Math.random() - 0.5) * 10
+            );
+          }
+        });
+        
+        threeJsRenderer.render(threeJsScene, threeJsCamera);
+      }
+      
+      // Handle window resize
+      window.addEventListener('resize', () => {
+        threeJsCamera.aspect = window.innerWidth / window.innerHeight;
+        threeJsCamera.updateProjectionMatrix();
+        threeJsRenderer.setSize(window.innerWidth, window.innerHeight);
+      });
+      
+      // Start animation
+      animate();
+    }
+    
+    // p5.js particles
+    let p5Instance;
+    
+    function initP5Background() {
+      if (p5Instance) {
+        p5Instance.remove();
+      }
+      
+      p5Instance = new p5((p) => {
+        let particles = [];
+        const particleCount = 50;
+        let isDarkTheme;
+        
+        p.setup = () => {
+          const canvas = p.createCanvas(p.windowWidth, p.windowHeight);
+          canvas.parent('p5-canvas');
+          
+          // Check current theme
+          isDarkTheme = document.documentElement.classList.contains('dark-theme');
+          
+          for (let i = 0; i < particleCount; i++) {
+            particles.push({
+              position: p.createVector(p.random(p.width), p.random(p.height)),
+              velocity: p.createVector(p.random(-0.5, 0.5), p.random(-0.5, 0.5)),
+              size: p.random(3, 8),
+              color: isDarkTheme ? 
+                p.color(255, 45, 94, p.random(50, 150)) : 
+                p.color(255, 45, 94, p.random(30, 100)),
+            });
+          }
+        };
+        
+        p.draw = () => {
+          p.clear();
+          
+          particles.forEach((particle) => {
+            p.noStroke();
+            p.fill(particle.color);
+            p.ellipse(
+              particle.position.x,
+              particle.position.y,
+              particle.size,
+              particle.size
+            );
+            
+            // Update position
+            particle.position.add(particle.velocity);
+            
+            // Bounce off edges
+            if (particle.position.x < 0 || particle.position.x > p.width) {
+              particle.velocity.x *= -1;
+            }
+            if (particle.position.y < 0 || particle.position.y > p.height) {
+              particle.velocity.y *= -1;
+            }
+          });
+        };
+        
+        p.windowResized = () => {
+          p.resizeCanvas(p.windowWidth, p.windowHeight);
+        };
+      });
+    }
+    
+    // Update backgrounds based on theme
+    function updateBackgrounds() {
+      const isDarkTheme = document.documentElement.classList.contains('dark-theme');
+      
+      // Update Three.js background
+      if (threeJsScene && torus && particles) {
+        // Update torus color
+        torus.material.emissiveIntensity = isDarkTheme ? 0.4 : 0.2;
+        
+        // Update particles
+        particles.forEach(particle => {
+          particle.material.emissiveIntensity = isDarkTheme ? 0.7 : 0.5;
+          particle.material.opacity = isDarkTheme ? 0.9 : 0.7;
+        });
+      }
+      
+      // Reinitialize p5 with new theme
+      initP5Background();
+    }
+    
+    // Parallax effect
+    function handleParallax() {
+      const parallaxElements = document.querySelectorAll('.parallax-bg');
+      
+      window.addEventListener('scroll', () => {
+        const scrollY = window.scrollY;
+        
+        parallaxElements.forEach(element => {
+          const speed = element.getAttribute('data-speed') || 0.2;
+          element.style.transform = `translateY(${scrollY * speed}px)`;
+        });
+      });
+    }
+    
+    // Counter animation
+    function animateCounters() {
+      const yearsCounter = document.getElementById('years-counter');
+      const clientsCounter = document.getElementById('clients-counter');
+      const stylistsCounter = document.getElementById('stylists-counter');
+      
+      const targetYears = 10;
+      const targetClients = 5000;
+      const targetStylists = 20;
+      
+      let currentYears = 0;
+      let currentClients = 0;
+      let currentStylists = 0;
+      
+      const duration = 2000; // 2 seconds
+      const interval = 20; // Update every 20ms
+      
+      const yearsIncrement = targetYears / (duration / interval);
+      const clientsIncrement = targetClients / (duration / interval);
+      const stylistsIncrement = targetStylists / (duration / interval);
+      
+      const counterInterval = setInterval(() => {
+        currentYears += yearsIncrement;
+        currentClients += clientsIncrement;
+        currentStylists += stylistsIncrement;
+        
+        if (currentYears >= targetYears) {
+          currentYears = targetYears;
+        }
+        
+        if (currentClients >= targetClients) {
+          currentClients = targetClients;
+        }
+        
+        if (currentStylists >= targetStylists) {
+          currentStylists = targetStylists;
+        }
+        
+        yearsCounter.textContent = Math.floor(currentYears) + '+';
+        clientsCounter.textContent = Math.floor(currentClients) + '+';
+        stylistsCounter.textContent = Math.floor(currentStylists) + '+';
+        
+        if (
+          currentYears === targetYears &&
+          currentClients === targetClients &&
+          currentStylists === targetStylists
+        ) {
+          clearInterval(counterInterval);
+        }
+      }, interval);
+    }
+    
+    // GSAP Animations
+    function initGSAPAnimations() {
+      // Register ScrollTrigger plugin
+      gsap.registerPlugin(ScrollTrigger);
+      
+      // Hero parallax effect
+      gsap.to('#hero-parallax', {
+        y: 200,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '#home',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true
+        }
+      });
+      
+      // Animate service cards
+      gsap.utils.toArray('.service-card').forEach((card, i) => {
+        gsap.from(card, {
+          y: 50,
+          opacity: 0,
+          duration: 0.8,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: card,
+            start: 'top 80%',
+            toggleActions: 'play none none none'
+          },
+          delay: i * 0.1
+        });
+      });
+      
+      // Animate about section
+      gsap.from('.about-text', {
+        x: -50,
+        opacity: 0,
+        duration: 1,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.about-text',
+          start: 'top 70%',
+          toggleActions: 'play none none none'
+        }
+      });
+      
+      gsap.from('.about-circle', {
+        scale: 0.5,
+        opacity: 0,
+        duration: 1,
+        ease: 'back.out(1.7)',
+        scrollTrigger: {
+          trigger: '.about-circle',
+          start: 'top 70%',
+          toggleActions: 'play none none none'
+        }
+      });
+      
+      // Animate pricing cards
+      gsap.utils.toArray('.pricing-card').forEach((card, i) => {
+        gsap.from(card, {
+          y: 100,
+          opacity: 0,
+          duration: 1,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: card,
+            start: 'top 80%',
+            toggleActions: 'play none none none'
+          },
+          delay: i * 0.2
+        });
+      });
+    }
+    
+    // Initialize everything on page load
+    window.addEventListener('load', () => {
+      initThreeJsBackground();
+      initP5Background();
+      handleParallax();
+      animateCounters();
+      initGSAPAnimations();
+      
+      // Animate elements when they come into view
+      const fadeElements = document.querySelectorAll('.fade-in');
+      
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+          }
+        });
+      }, { threshold: 0.1 });
+      
+      fadeElements.forEach(element => {
+        element.style.opacity = '0';
+        element.style.transform = 'translateY(20px)';
+        element.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+        observer.observe(element);
+      });
+    });
+  </script>
+</body>
+</html>
